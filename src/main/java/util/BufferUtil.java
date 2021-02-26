@@ -1,7 +1,14 @@
-package core.buffer;
+package util;
 
 import constant.enums.FileMode;
 import core.value.MappedFileConfig;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufUtil;
+import io.netty.buffer.CompositeByteBuf;
+import io.netty.buffer.UnpooledByteBufAllocator;
+import io.netty.channel.DefaultFileRegion;
+import io.netty.handler.stream.ChunkedFile;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -20,6 +27,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
+import java.util.Arrays;
 import java.util.function.Consumer;
 
 /**
@@ -28,7 +36,7 @@ import java.util.function.Consumer;
  * @date : 2021-02-24 10:14
  * @description : 缓存
  */
-public class Buffers {
+public class BufferUtil {
 
     public static MappedByteBuffer mappedByteBuffer(File file, FileMode fileMode, long offset, long length) throws IOException {
         return new RandomAccessFile(file, fileMode.getFileMode())
@@ -70,45 +78,65 @@ public class Buffers {
         m.invoke(FileChannelImpl.class, buffer);
     }
 
-    public static void withMappedByteBuffer(final MappedFileConfig config, Consumer<? super MappedByteBuffer> consumer) throws Exception {
-        MappedByteBuffer mappedByteBuffer = null;
-        try{
-            mappedByteBuffer = mappedByteBuffer(config);
-            consumer.accept(mappedByteBuffer);
-        } finally {
-            clean(mappedByteBuffer);
-        }
-    }
-
     /**
-     * 创建MappedByteBuffer
-     * @param config
-     * @return
-     * @throws IOException
+     * 不直接返回数组是因为避免不必要的数组复制
+     * @param buf ByteBuf
+     * @return 包装数组
      */
-    private static InternalMappedInfo mappedInfo(final MappedFileConfig config) throws IOException {
-        RandomAccessFile raf = null;
-        FileChannel fs = null;
-        MappedByteBuffer buffer;
-        try{
-            raf = new RandomAccessFile(config.getPath().toFile(), config.getFileMode().getFileMode());
-            fs = raf.getChannel();
-            buffer = fs.map(config.getFileMode().getMapMode(), config.getOffset(), config.getLength());
-        } finally {
-            if(fs != null){
-                fs.close();
-            }
-            if(raf != null){
-                raf.close();
-            }
+    public static WrapperBytes wrapperBytes(ByteBuf buf){
+        byte[] array;
+        int offset, length;
+        if (buf.hasArray()){
+            // 支撑数组形式的话
+            array = buf.array();
+            // 计算第一个字节的偏移量
+            offset = buf.arrayOffset() + buf.readerIndex();
+            // 获取可读字节数
+            length = buf.readableBytes();
+        } else {
+            // 直接缓冲区形式，获取可读字节数
+            offset = 0;
+            length = buf.readableBytes();
+            // 分配一个数组保存具有该长度的字节数据
+            array = new byte[length];
+            // 复制数据
+            buf.getBytes(buf.readerIndex(), array);
         }
-        return InternalMappedInfo.of(buffer, raf, fs);
+        return new WrapperBytes(array, offset, length);
     }
 
-    @Data(staticConstructor = "of")
-    private static class InternalMappedInfo{
-        private final MappedByteBuffer mappedByteBuffer;
-        private final Closeable closeable;
-        private final FileChannel fileChannel;
+    public static byte[] array(ByteBuf buf){
+        WrapperBytes bytes = wrapperBytes(buf);
+        return Arrays.copyOfRange(bytes.array, bytes.offset, bytes.length);
+    }
+
+    @Data
+    @AllArgsConstructor
+    public static class WrapperBytes {
+        private final byte[] array;
+
+        private final int offset;
+
+        private final int length;
+
+    }
+
+    public static void main(String[] args) {
+        ByteBuf buf = null;
+        ByteBuf buf1 = null;
+        try{
+            buf = UnpooledByteBufAllocator.DEFAULT.heapBuffer();
+            buf.writeLong(12);
+            System.out.println("array=" + Arrays.toString(array(buf)));
+            System.out.println("wrapperArray=" +wrapperBytes(buf));
+            buf1 = UnpooledByteBufAllocator.DEFAULT.directBuffer();
+            buf1.writeLong(12);
+            System.out.println("array=" +Arrays.toString(array(buf1)));
+            System.out.println("wrapperArray=" + wrapperBytes(buf1));
+        } finally {
+            buf.release();
+            buf1.release();
+        }
+
     }
 }
