@@ -1,8 +1,11 @@
 package core.chunk.impl;
 
-import core.IChunkedFile;
+import core.chunk.IChunkedFile;
 import core.chunk.AbstractChunkedFile;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Files;
 import java.nio.file.attribute.BasicFileAttributes;
 
 /**
@@ -27,4 +30,15 @@ public class ChunkedFile extends AbstractChunkedFile implements IChunkedFile {
     public BasicFileAttributes basicFileAttributes() {
         return null;
     }
+
+    @Override
+    public long index() {
+        return 0;
+    }
+
+    @Override
+    public OutputStream toOutputStream() throws IOException {
+        return Files.newOutputStream(file);
+    }
+
 }

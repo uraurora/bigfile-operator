@@ -1,8 +1,7 @@
 package core.buffer.impl;
 
-import constant.enums.FileMode;
+import core.file.AbstractOperableFile;
 import lombok.Getter;
-import util.Options;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -25,13 +24,9 @@ import java.util.function.Consumer;
  * @description : 创建MappedByteBuffer实例，并在使用结束有效释放资源
  */
 @Getter
-public class MappedByteBufferHolder implements Closeable {
+public class MappedByteBufferHolder extends AbstractOperableFile<MappedByteBuffer> {
 
     private MappedByteBufferConfig config;
-
-    private MappedByteBuffer buffer;
-
-    private volatile boolean closed = false;
 
     private final ReadWriteLock lock = new ReentrantReadWriteLock();
 
@@ -51,40 +46,26 @@ public class MappedByteBufferHolder implements Closeable {
 
     private void map() throws IOException {
         try(FileChannel fs = FileChannel.open(this.config.getPath(), this.config.getFileMode().getOpenOption())){
-            buffer = fs.map(this.config.getFileMode().getMapMode(), this.config.getOffset(), this.config.getSize());
+            file = fs.map(this.config.getFileMode().getMapMode(), this.config.getOffset(), this.config.getSize());
         }
     }
 
     @Override
-    public void close() throws IOException {
-        synchronized(this) {
-            if (closed) {
-                return;
-            }
-            unmap();
-            closed = true;
-        }
+    protected void internalClose() throws IOException {
+        unmap();
     }
 
     public void unmap(){
-        if(checkBuffer(buffer)){
-            Cleaner.clean(buffer);
-            buffer = null;
+        if(checkBuffer(file)){
+            Cleaner.clean(file);
+            file = null;
         }
-    }
-
-    public void operate(Consumer<? super MappedByteBuffer> operator){
-        operator.accept(buffer);
-    }
-
-    public MappedByteBuffer operateWithResult(Consumer<? super MappedByteBuffer> operator){
-        return Options.with(buffer, operator);
     }
 
     public void operateWithReadLock(Consumer<? super MappedByteBuffer> operator){
         readLock.lock();
         try{
-            operator.accept(buffer);
+            operator.accept(file);
         } finally {
             readLock.unlock();
         }
@@ -93,7 +74,7 @@ public class MappedByteBufferHolder implements Closeable {
     public void operateWithWriteLock(Consumer<? super MappedByteBuffer> operator){
         writeLock.lock();
         try{
-            operator.accept(buffer);
+            operator.accept(file);
         } finally {
             writeLock.unlock();
         }

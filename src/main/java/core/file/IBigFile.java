@@ -1,4 +1,4 @@
-package core.chunk;
+package core.file;
 
 import java.math.BigInteger;
 
@@ -9,7 +9,10 @@ import java.math.BigInteger;
  * @description :
  */
 public interface IBigFile {
-
+    /**
+     *
+     * @return
+     */
     BigInteger size();
 
 }

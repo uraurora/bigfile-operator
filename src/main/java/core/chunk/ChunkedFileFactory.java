@@ -3,11 +3,8 @@ package core.chunk;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import core.IChunkedFile;
-import io.netty.handler.stream.ChunkedFile;
 
 import java.time.Duration;
-import java.util.concurrent.ConcurrentMap;
 
 /**
  * @author : gaoxiaodong04
