@@ -1,6 +1,7 @@
 package util;
 
 import constant.enums.FileMode;
+import core.buffer.impl.WrapperBytes;
 import core.value.MappedFileConfig;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufUtil;
@@ -36,7 +37,7 @@ import java.util.function.Consumer;
  * @date : 2021-02-24 10:14
  * @description : 缓存
  */
-public class BufferUtil {
+public abstract class BufferUtils {
 
     public static MappedByteBuffer mappedByteBuffer(File file, FileMode fileMode, long offset, long length) throws IOException {
         return new RandomAccessFile(file, fileMode.getFileMode())
@@ -107,19 +108,9 @@ public class BufferUtil {
 
     public static byte[] array(ByteBuf buf){
         WrapperBytes bytes = wrapperBytes(buf);
-        return Arrays.copyOfRange(bytes.array, bytes.offset, bytes.length);
+        return Arrays.copyOfRange(bytes.getArray(), bytes.getOffset(), bytes.getLength());
     }
 
-    @Data
-    @AllArgsConstructor
-    public static class WrapperBytes {
-        private final byte[] array;
-
-        private final int offset;
-
-        private final int length;
-
-    }
 
     public static void main(String[] args) {
         ByteBuf buf = null;

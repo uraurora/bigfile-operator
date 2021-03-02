@@ -50,4 +50,16 @@ public abstract class AbstractOperableFile<T> implements IOperable<T>, ICloseabl
      * @throws IOException io异常
      */
     protected abstract void internalClose() throws IOException;
+
+    protected static void checkSize(long start, long end){
+        if(start > end){
+            throw new IllegalArgumentException("startOffset should be greater than endOffset");
+        }
+    }
+
+    protected static void checkEndOffset(long endOffset, long fileSize){
+        if(endOffset > fileSize){
+            throw new IllegalArgumentException("endOffset should be greater than fileSize");
+        }
+    }
 }

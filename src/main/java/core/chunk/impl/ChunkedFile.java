@@ -2,11 +2,12 @@ package core.chunk.impl;
 
 import core.chunk.IChunkedFile;
 import core.chunk.AbstractChunkedFile;
+import io.netty.buffer.ByteBuf;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.file.Files;
-import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.channels.FileChannel;
+import java.nio.file.Path;
 
 /**
  * @author : gaoxiaodong04
@@ -16,29 +17,31 @@ import java.nio.file.attribute.BasicFileAttributes;
  */
 public class ChunkedFile extends AbstractChunkedFile implements IChunkedFile {
 
-    @Override
-    public long size() {
-        return 0;
+    private ByteBuf buffer;
+
+    public ChunkedFile(Path path, long position, int chunkedSize) throws IOException {
+        super(path, chunkedSize);
+        buffer.writeBytes(file, position, chunkedSize);
     }
 
-    @Override
-    public String fileName() {
-        return null;
+    public ChunkedFile(FileChannel fileChannel, long position, int chunkedSize) throws IOException {
+        super(fileChannel, chunkedSize);
+        buffer.writeBytes(file, position, chunkedSize);
     }
 
-    @Override
-    public BasicFileAttributes basicFileAttributes() {
-        return null;
-    }
-
-    @Override
-    public long index() {
-        return 0;
+    public ChunkedFile(ByteBuf buffer){
+        this.buffer = buffer;
+        this.chunkedSize = this.buffer.readableBytes();
     }
 
     @Override
     public OutputStream toOutputStream() throws IOException {
-        return Files.newOutputStream(file);
+        return null;
+    }
+
+    @Override
+    public ByteBuf toByteBuf() {
+        return null;
     }
 
 }

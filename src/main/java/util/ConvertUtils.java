@@ -6,7 +6,7 @@ package util;
  * @date : 2021-02-23 20:38
  * @description :
  */
-public abstract class ConvertUtil {
+public abstract class ConvertUtils {
     public static byte[] int2Bytes(int num) {
         byte[] byteNum = new byte[4];
         for (int ix = 0; ix < 4; ++ix) {

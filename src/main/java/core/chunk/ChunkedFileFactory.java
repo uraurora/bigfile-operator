@@ -3,6 +3,8 @@ package core.chunk;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import core.chunk.impl.ChunkedFile;
+import io.netty.buffer.ByteBuf;
 
 import java.time.Duration;
 
@@ -45,6 +47,10 @@ public class ChunkedFileFactory {
     private IChunkedFile newChunkedFile(IChunkedFileIndex key){
         // todo: impl
         return null;
+    }
+
+    private IChunkedFile newChunkedFile(ByteBuf buffer){
+        return new ChunkedFile(buffer);
     }
 
 }
