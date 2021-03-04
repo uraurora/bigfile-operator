@@ -1,13 +1,17 @@
 package core.file;
 
 import core.chunk.IChunkedFile;
+import core.common.ICloseable;
+import core.common.IStreamable;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author gaoxiaodong
  */
-public interface ILocalBigFile extends IBigFile {
+public interface ILocalBigFile extends IBigFile, ICloseable, IStreamable<IChunkedFile> {
     /**
      * 获取当前文件readerIndex开始至(readerIndex + chunkedSize)处的分块文件
      * @return 分块文件
@@ -23,6 +27,14 @@ public interface ILocalBigFile extends IBigFile {
      */
     IChunkedFile getChunk(int index) throws IOException;
 
+    default List<IChunkedFile> getChunks(int start, int end) throws IOException{
+        List<IChunkedFile> res = new ArrayList<>();
+        for (int i = start; i < end; i++) {
+            res.add(getChunk(i));
+        }
+        return res;
+    }
+
     /**
      * 从文件当前readerIndex处出去分块文件，并且readerIndex会增加chunkedSize
      * @return 分块文件
@@ -32,7 +44,7 @@ public interface ILocalBigFile extends IBigFile {
 
     /**
      * 设置文件readerIndex
-     * @param readerIndex 读取索引
+     * @param readerIndex duqu
      */
     void readerIndex(long readerIndex);
 

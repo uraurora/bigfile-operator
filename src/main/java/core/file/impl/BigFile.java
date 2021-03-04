@@ -30,10 +30,6 @@ public class BigFile extends AbstractBigFile implements IBigFile {
 
     }
 
-    @Override
-    public Iterator<IChunkedFile> iterator() {
-        return null;
-    }
 
     @Override
     protected boolean isEnd() {

@@ -11,7 +11,7 @@ import java.math.BigInteger;
  * @date : 2021-02-25 20:17
  * @description :
  */
-public interface IBigFile extends IStreamable<IChunkedFile> {
+public interface IBigFile {
     /**
      * 文件大小
      * @return 文件大小

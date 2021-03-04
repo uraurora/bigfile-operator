@@ -13,7 +13,11 @@ import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
+
+import static util.Options.buildList;
 
 /**
  * @author : gaoxiaodong04
@@ -42,7 +46,7 @@ public class LocalBigFile extends AbstractBigFile implements ILocalBigFile {
         this.chunkedSize = chunkedSize;
         checkSize(this.chunkedSize);
         checkSize(this.startOffset, this.endOffset);
-        this.size = BigInteger.valueOf(startOffset - endOffset);
+        this.size = BigInteger.valueOf(this.endOffset - this.startOffset);
         this.readerIndex = this.startOffset;
         this.file = path;
         this.fc = FileChannel.open(file, StandardOpenOption.READ);
