@@ -1,5 +1,8 @@
 package core.file;
 
+import core.common.ICloseable;
+import core.common.IOperable;
+
 import java.io.IOException;
 
 /**
@@ -8,7 +11,7 @@ import java.io.IOException;
  * @date : 2021-02-26 16:49
  * @description :
  */
-public abstract class AbstractOperableFile<T> implements IOperable<T>, ICloseableFile{
+public abstract class AbstractOperableFile<T> implements IOperable<T>, ICloseable {
 
     protected volatile boolean closed = false;
 
@@ -54,6 +57,12 @@ public abstract class AbstractOperableFile<T> implements IOperable<T>, ICloseabl
     protected static void checkSize(long start, long end){
         if(start > end){
             throw new IllegalArgumentException("startOffset should be greater than endOffset");
+        }
+    }
+
+    protected static void checkSize(long size){
+        if(size < 0){
+            throw new IllegalArgumentException("size should not be less than 0");
         }
     }
 

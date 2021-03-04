@@ -1,4 +1,4 @@
-package core.file;
+package core.common;
 
 import java.util.function.Consumer;
 

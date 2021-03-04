@@ -11,7 +11,9 @@ import java.nio.file.Path;
  * @date : 2021-02-25 20:17
  * @description :
  */
-public abstract class AbstractBigFile extends AbstractOperableFile<Path> implements Iterable<IChunkedFile> {
+public abstract class AbstractBigFile extends AbstractOperableFile<Path> {
+
+    protected static final int DEFAULT_CHUNKED_SIZE = 1024 * 8;
 
     protected int chunkedSize;
     /**

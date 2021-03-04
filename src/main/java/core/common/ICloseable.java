@@ -1,11 +1,11 @@
-package core.file;
+package core.common;
 
 import java.io.Closeable;
 
 /**
  * @author gaoxiaodong
  */
-public interface ICloseableFile extends Closeable {
+public interface ICloseable extends Closeable {
 
     /**
      * 文件是否关闭

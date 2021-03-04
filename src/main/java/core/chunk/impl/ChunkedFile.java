@@ -41,7 +41,7 @@ public class ChunkedFile extends AbstractChunkedFile implements IChunkedFile {
 
     @Override
     public ByteBuf toByteBuf() {
-        return null;
+        return buffer;
     }
 
 }
