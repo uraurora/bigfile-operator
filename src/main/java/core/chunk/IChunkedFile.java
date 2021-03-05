@@ -1,6 +1,7 @@
 package core.chunk;
 
 
+import com.sun.org.apache.bcel.internal.generic.RETURN;
 import core.value.WrapperBytes;
 import core.chunk.impl.ChunkedFile;
 import io.netty.buffer.ByteBuf;
@@ -9,11 +10,12 @@ import util.BufferUtils;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.ByteBuffer;
 
 /**
  * @author gaoxiaodong
  */
-public interface IChunkedFile {
+public interface IChunkedFile extends Comparable<IChunkedFile>{
 
     /**
      * 返回分块文件的大小
@@ -33,6 +35,15 @@ public interface IChunkedFile {
      * @return 转换为netty的ByteBuf，因为它有更好的操作和池化性能
      */
     ByteBuf toByteBuf();
+
+    /**
+     * 转换为byteBuffer，见{@link ByteBuffer}
+     * @return byteBuffer
+     */
+    default ByteBuffer toByteBuffer(){
+        final WrapperBytes wrapperBytes = wrapperBytes();
+        return ByteBuffer.wrap(wrapperBytes.getArray(), wrapperBytes.getOffset(), wrapperBytes.getLength());
+    }
 
     /**
      * 转换为包装byte数组，不直接转换为数组是为了避免拷贝成本

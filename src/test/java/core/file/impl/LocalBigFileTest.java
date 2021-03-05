@@ -6,6 +6,7 @@ import core.file.ILocalBigFile;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -49,7 +50,17 @@ public class LocalBigFileTest {
     }
 
     @Test
-    public void getChunk(){
-
+    public void getChunk() throws IOException {
+        try(ILocalBigFile bigFile = new LocalBigFile(path, 1024)) {
+            List<IChunkedFile> l = bigFile.stream()
+                    .collect(Collectors.toList());
+            System.out.println(l.size());
+            for (int i = 1; i <= l.size(); i++) {
+                final IChunkedFile file = l.get(i - 1);
+                final IChunkedFile chunk = bigFile.getChunk(i);
+                assertArrayEquals(file.toByteArray(), chunk.toByteArray());
+                assertEquals(file, chunk);
+            }
+        }
     }
 }

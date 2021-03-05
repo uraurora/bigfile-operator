@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.channels.FileChannel;
 import java.nio.file.Path;
+import java.util.Objects;
 
 /**
  * @author : gaoxiaodong04
@@ -35,6 +36,12 @@ public class ChunkedFile extends AbstractChunkedFile implements IChunkedFile {
     }
 
     @Override
+    protected void internalClose() throws IOException {
+        super.internalClose();
+        buffer.release();
+    }
+
+    @Override
     public OutputStream toOutputStream() throws IOException {
         return null;
     }
@@ -44,4 +51,25 @@ public class ChunkedFile extends AbstractChunkedFile implements IChunkedFile {
         return buffer;
     }
 
+    @Override
+    public int compareTo(IChunkedFile that) {
+        return buffer.compareTo(that.toByteBuf());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ChunkedFile that = (ChunkedFile) o;
+        return buffer.equals(that.buffer);
+    }
+
+    @Override
+    public int hashCode() {
+        return buffer.hashCode();
+    }
 }

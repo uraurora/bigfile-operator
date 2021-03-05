@@ -41,4 +41,11 @@ public abstract class AbstractChunkedFile extends AbstractOperableFile<FileChann
         return chunkedSize;
     }
 
+    /**
+     * compare
+     * @param that other chunk file
+     * @return 比较结果
+     */
+    public abstract int compareTo(IChunkedFile that);
+
 }
