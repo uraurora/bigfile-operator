@@ -1,0 +1,5 @@
+core/file/IDistributedBigFile.class
+core/adapter/FileAdapters.class
+core/common/AbstractCancellable.class
+constant/enums/FileType.class
+core/common/AbstractCancellable$TaskState.class

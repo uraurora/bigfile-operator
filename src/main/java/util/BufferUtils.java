@@ -22,7 +22,7 @@ import java.util.Arrays;
  * @author : gaoxiaodong04
  * @program : bigfile-operator
  * @date : 2021-02-24 10:14
- * @description : 缓存
+ * @description : 数字节组缓存工具类
  */
 public abstract class BufferUtils {
 

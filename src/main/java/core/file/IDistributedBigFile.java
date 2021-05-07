@@ -1,4 +1,4 @@
-package core.file.impl;
+package core.file;
 
 import core.file.IBigFile;
 
@@ -7,5 +7,7 @@ import core.file.IBigFile;
  * @author gaoxiaodong
  */
 public interface IDistributedBigFile extends IBigFile {
+
+
 
 }

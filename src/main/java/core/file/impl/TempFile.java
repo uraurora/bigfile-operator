@@ -22,6 +22,10 @@ public class TempFile extends AbstractOperableFile<Path> {
         this(null, prefix, suffix);
     }
 
+    public TempFile(Path file){
+        super(file);
+    }
+
     @Override
     protected void internalClose() throws IOException {
         if(file != null){

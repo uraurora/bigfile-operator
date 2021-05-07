@@ -1,6 +1,5 @@
 package core.common;
 
-import com.sun.org.apache.bcel.internal.generic.NEW;
 import lombok.Getter;
 
 /**
@@ -43,7 +42,7 @@ public abstract class AbstractCancellable implements ICancellable{
             setCancelled(true);
             return true;
         } catch (Exception e) {
-            throw new InterruptedException("");
+            throw new InterruptedException("the task has bean interrupted! ");
         }
     }
 
